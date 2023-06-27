@@ -47,10 +47,12 @@ class AddTaskState extends ConsumerState<AddTask> {
   Widget build(BuildContext context) {
     // final isHighPriorityFuture = ref.watch(isHighPriorityProvider(widget.task));
 
+    final size = MediaQuery.of(context).size;
+
     return AlertDialog(
       contentPadding: const EdgeInsets.only(left: 10, right: 10, top: 15),
       content: SizedBox(
-        width: 300,
+        width: size.width * 0.8,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -67,10 +69,8 @@ class AddTaskState extends ConsumerState<AddTask> {
       actionsPadding: const EdgeInsets.only(left: 7, right: 5, bottom: 15),
       actionsAlignment: MainAxisAlignment.end,
       actions: [
-        //TODO:
         if (widget.task.dateTime != null) _dateButton(context),
         if (widget.task.time != null) _timeButton(),
-
         _saveButton(context),
       ],
     );
@@ -79,7 +79,16 @@ class AddTaskState extends ConsumerState<AddTask> {
   OutlinedButton _timeButton() {
     return OutlinedButton(
         style: const ButtonStyle(visualDensity: VisualDensity.compact),
-        onPressed: () {},
+        onPressed: () async {
+          await _showTimePicker(context).then((value) {
+            if (value != null) {
+              timeOfDay = value;
+              widget.task.time =
+                  '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
+              setState(() {});
+            }
+          });
+        },
         child: Text(widget.task.time!));
   }
 
@@ -113,7 +122,7 @@ class AddTaskState extends ConsumerState<AddTask> {
         scheduledDateTime.minute > TimeOfDay.now().minute) {
       LocalNotifications.showLocalNotification(
           id: widget.task.id!,
-          title: 'Tienes tareas pendientes!',
+          title: '¡Tienes tareas pendientes!',
           body: widget.task.title,
           scheduledDate: scheduledDateTime);
     }
@@ -125,7 +134,6 @@ class AddTaskState extends ConsumerState<AddTask> {
         onPressed: isButtonEnabled || widget.task.title != ''
             ? () async {
                 date = widget.task.dateTime ?? DateTime.now();
-                // timeOfDay = widget.task.time;
 
                 await createNotification();
 
@@ -202,6 +210,8 @@ class _CustomTextField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+
+    final size = MediaQuery.of(context).size;
     return Form(
       key: ref.read(taskProvider).formKey,
       child: Column(
@@ -212,10 +222,10 @@ class _CustomTextField extends ConsumerWidget {
               initialValue: task?.title == '' ? null : task?.title,
               controller: task?.title == '' ? textController : null,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                constraints: BoxConstraints(maxWidth: 240),
+              decoration:  InputDecoration(
+                constraints: BoxConstraints(maxWidth: size.width * 0.6),
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 hintText: 'Nueva tarea',
                 border: InputBorder.none,
               ),
@@ -232,9 +242,9 @@ class _CustomTextField extends ConsumerWidget {
               onChanged: (value) {
                 task?.details = value;
               },
-              decoration: const InputDecoration(
-                constraints: BoxConstraints(maxWidth: 240),
-                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+              decoration: InputDecoration(
+                constraints: BoxConstraints(maxWidth: size.width * 0.6),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                 hintText: 'Detalles (Opcional)',
                 border: InputBorder.none,
               ),

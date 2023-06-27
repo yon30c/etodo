@@ -1,9 +1,10 @@
+import 'package:etodo/src/config/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../main.dart';
 import '../../providers/providers.dart';
-import '../widgets.dart';
 
 class CsNavbar extends ConsumerWidget {
   static int calculateSelectedIndex(BuildContext context) {
@@ -40,81 +41,210 @@ class CsNavbar extends ConsumerWidget {
         data: IconThemeData(color: Theme.of(context).colorScheme.primary),
         child: Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.swap_vert),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(_snackBar(context));
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.more_horiz),
-              onPressed: () => showModalBottomSheet(
-                useSafeArea: true,
-                constraints: const BoxConstraints(maxHeight: 230),
-                context: context,
-                builder: (context) {
-                  final color = Theme.of(context).colorScheme;
-                  return ListView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 15),
-                      children: [
-                        ListTile(
-                            leading: Icon(
-                              Icons.add_task,
-                              color: color.primary,
-                            ),
-                            title: const Text('Agregar tarea'),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AddTask(
-                                    task: ref.read(taskProvider).createTask(),
-                                  );
-                                },
-                              );
-                            }),
-                        const Divider(),
-                        ListTile(
-                            leading: Icon(
-                              Icons.done_all_rounded,
-                              color: color.primary,
-                            ),
-                            title: const Text('Marcar todas como completadas'),
-                            onTap: () {
-                              ref.read(taskProvider).toggleAllCompleted();
-                              Navigator.of(context).pop();
-                            }),
-                        const Divider(),
-                        ListTile(
-                          leading: const Icon(
-                            Icons.delete_forever,
-                            color: Colors.red,
-                          ),
-                          title: const Text('Borrar las tareas completadas'),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            ref.read(taskProvider).deleteAllCompleted();
-                          },
-                        ),
-                      ]);
-                },
-              ),
-            )
+            _markAllCompleted(context, ref),
+            _deleteAllCompleted(context, ref),
+            _moreVert(context, ref)
           ],
         ),
       ),
     );
   }
 
-  SnackBar _snackBar(context) {
-    return SnackBar(
-      content: const Text('Oops! este boton aun no esta activo'),
-      action: SnackBarAction(
-        label: 'Aceptar',
-        onPressed: () {},
+  IconButton _moreVert(BuildContext context, WidgetRef ref) {
+    return IconButton(
+      icon: const Icon(Icons.more_horiz),
+      onPressed: () => showModalBottomSheet(
+        useSafeArea: true,
+        // constraints: const BoxConstraints(maxHeight: 230),
+        context: context,
+        builder: (context) {
+          final textStyle = Theme.of(context).textTheme;
+          return SizedBox(
+            width: double.infinity,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                // padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Apariencia',
+                      style: textStyle.titleMedium,
+                    ),
+                  ),
+                  SegmentedButton(
+                      showSelectedIcon: false,
+                      style: const ButtonStyle(
+                          visualDensity: VisualDensity.comfortable,
+                          padding: MaterialStatePropertyAll(
+                              EdgeInsets.symmetric(horizontal: 20))),
+                      onSelectionChanged: (value) {
+                        themeController.updateThemeMode(value.first);
+                      },
+                      segments: const [
+                        ButtonSegment(
+                            enabled: true,
+                            value: ThemeMode.light,
+                            label: Text('Claro')),
+                        ButtonSegment(
+                            enabled: true,
+                            value: ThemeMode.system,
+                            label: Text('Sistema')),
+                        ButtonSegment(
+                            enabled: true,
+                            value: ThemeMode.dark,
+                            label: Text('Oscuro')),
+                      ],
+                      selected: {
+                        themeController.themeMode
+                      }),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Colores',
+                      style: textStyle.titleMedium,
+                    ),
+                  ),
+                  SegmentedButton(
+                      showSelectedIcon: false,
+                      onSelectionChanged: (value) =>
+                          {themeController.updateSelectedColor(value.first)},
+                      segments: colors
+                          .map((e) => ButtonSegment(
+                              value: e,
+                              label: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: e,
+                                ),
+                                width: 30,
+                                height: 30,
+                              )))
+                          .toList(),
+                      selected: {themeController.selectedColor}),
+                  const SizedBox(
+                    height: 20,
+                  )
+                ]),
+          );
+        },
       ),
     );
+  }
+
+  IconButton _deleteAllCompleted(BuildContext context, ref) {
+    return IconButton(
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                final textStyle = Theme.of(context).textTheme;
+                return SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Eliminar tareas completadas',
+                          style: textStyle.titleMedium,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        width: double.infinity,
+                        child: FilledButton(
+                            style: const ButtonStyle(
+                                padding: MaterialStatePropertyAll(
+                                    EdgeInsets.symmetric(
+                                        horizontal: 40, vertical: 5))),
+                            onPressed: () {
+                              ref.read(taskProvider).deleteAllCompleted();
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Aceptar')),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        width: double.infinity,
+                        child: FilledButton.tonal(
+                            style: const ButtonStyle(
+                                padding: MaterialStatePropertyAll(
+                                    EdgeInsets.symmetric(
+                                        horizontal: 40, vertical: 5))),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancelar')),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      )
+                    ],
+                  ),
+                );
+              });
+        },
+        icon: const Icon(
+          Icons.delete_forever_rounded,
+        ));
+  }
+
+  IconButton _markAllCompleted(BuildContext context, ref) {
+    return IconButton(
+        onPressed: () => showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              final textStyle = Theme.of(context).textTheme;
+              return SizedBox(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Marcar todo como completado',
+                        style: textStyle.titleMedium,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      width: double.infinity,
+                      child: FilledButton(
+                          style: const ButtonStyle(
+                              padding: MaterialStatePropertyAll(
+                                  EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 5))),
+                          onPressed: () {
+                            ref.read(taskProvider).toggleAllCompleted();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Aceptar')),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      width: double.infinity,
+                      child: FilledButton.tonal(
+                          style: const ButtonStyle(
+                              padding: MaterialStatePropertyAll(
+                                  EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 5))),
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancelar')),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    )
+                  ],
+                ),
+              );
+            }),
+        icon: const Icon(Icons.done_all_rounded));
   }
 }

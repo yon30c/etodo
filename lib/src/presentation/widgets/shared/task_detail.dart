@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:timezone/timezone.dart';
 
 // import '../../../config/notifications/notifications.dart';
+import '../../../../main.dart';
 import '../../../domain/domain.dart';
 import '../../providers/providers.dart';
 import '../../views/views.dart';
@@ -44,45 +45,84 @@ class TaskDetails extends ConsumerWidget {
         builder: (context) {
           final color = Theme.of(context).colorScheme;
           return Column(
+            // itemExtent: 55,
+
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  leading: Icon(
-                    Icons.edit,
-                    color: color.primary,
-                  ),
-                  title: const Text('Editar'),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AddTask(
-                          task: task,
-                        );
-                      },
-                    ).then((value) => Navigator.of(context).pop());
-                  }),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Divider(),
+              const SizedBox(
+                height: 15,
               ),
-              ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                leading: const Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
-                title: const Text('Eliminar'),
-                onTap: () async {
-                  await ref.read(taskProvider).deleteTask(task);
+              SizedBox(
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 15,),
 
-                  await ref.read(taskProvider).loadTask().then((value) {
-                    Navigator.of(context).pop();
-                  });
-                },
+                    Icon(
+                        Icons.edit,
+                        color: themeController.selectedColor,
+                      ),
+                    const SizedBox(width: 10,),
+
+                      Expanded(
+                        child: FilledButton.tonal(
+                          child: Text(
+                            'Editar',
+                            style: TextStyle(color: color.primary),
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AddTask(
+                                  task: task,
+                                );
+                              },
+                            ).then((value) => Navigator.of(context).pop());
+                          },
+                        ),
+                      ),
+
+                    const SizedBox(width: 15,),
+                    
+                  ],
+                ),
+              ),
+
+
+              SizedBox(
+                width: double.infinity,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const SizedBox(width: 15,),
+
+                    Icon(
+                      Icons.delete,
+                      color: themeController.selectedColor,
+                    ),
+                    const SizedBox(width: 10,),
+                    Expanded(
+                      child: FilledButton.tonal(
+                        child: Text(
+                          'Eliminar',
+                          style: TextStyle(color: color.primary),
+                        ),
+                        onPressed: () async {
+                          await ref.read(taskProvider).deleteTask(task);
+                          await ref.read(taskProvider).loadTask().then((value) {
+                            Navigator.of(context).pop();
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 15,),
+
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 15,
               ),
             ],
           );

@@ -1,3 +1,4 @@
+import 'package:etodo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -38,45 +39,82 @@ class CompletedTaskState extends ConsumerState<CompletedTask> {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                leading: const Icon(
-                  Icons.delete,
-                  color: Colors.red,
+              const SizedBox(
+                height: 15,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+
+                      const SizedBox(
+                    width: 15,
+                  ),
+                  Icon(
+                    Icons.delete,
+                    color: themeController.selectedColor,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: FilledButton.tonal(
+                      style: const ButtonStyle(
+                          padding: MaterialStatePropertyAll(
+                              EdgeInsets.symmetric(horizontal: 130))),
+                      child: const Text('Eliminar'),
+                      onPressed: () async {
+                        await ref
+                            .read(taskProvider)
+                            .deleteTask(widget.task)
+                            .then((value) {
+                          Navigator.of(context).pop();
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                ]),
+              ),
+
+              const SizedBox(height: 7,),
+              SizedBox(
+                
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      width: 15,
+                    ),
+                     Icon(Icons.cancel, color: themeController.selectedColor ,),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: FilledButton.tonal(
+                       
+                        child: const Text('Marcas como no completada'),
+                        onPressed: () async {
+                          await ref
+                              .read(taskProvider)
+                              .toggleCompleted(widget.task)
+                              .then((value) {
+                            Navigator.of(context).pop();
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                  ],
                 ),
-                title: const Text('Eliminar'),
-                onTap: () async {
-                  await ref
-                      .read(taskProvider)
-                      .deleteTask(widget.task)
-                      .then((value) {
-                    Navigator.of(context).pop();
-                  });
-                  // ref.refresh(taskProvider).loadTask();
-                },
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Divider(),
-              ),
-              ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                leading: const Icon(Icons.cancel),
-                title: const Text('Marcas como no completada'),
-                onTap: () async {
-                  await ref
-                      .read(taskProvider)
-                      .toggleCompleted(widget.task)
-                      .then((value) {
-                    Navigator.of(context).pop();
-                  });
-
-                  // ref.refresh(taskProvider).loadTask();
-
-                  // ref.read(taskProvider.notifier).completTasks.remove(widget.task);
-                },
+              const SizedBox(
+                height: 10,
               ),
             ],
           );

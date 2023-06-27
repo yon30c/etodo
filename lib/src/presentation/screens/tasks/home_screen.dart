@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/notifications/notifications.dart';
 import '../../providers/providers.dart';
@@ -47,7 +48,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tareas'),
+        title: Text(
+          'eToDo',
+          style: GoogleFonts.fasthand(fontSize: 28),
+        ),
         bottom: _customTabBar(context),
       ),
       body: TabBarView(controller: tabController, children: children),
@@ -59,56 +63,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   TabBar _customTabBar(BuildContext context) {
     return TabBar(
-        labelPadding: const EdgeInsets.only(),
+        // labelPadding: const EdgeInsets.only(),
         splashFactory: NoSplash.splashFactory,
         controller: tabController,
+        isScrollable: true,
         enableFeedback: true,
         dragStartBehavior: DragStartBehavior.start,
         physics: const BouncingScrollPhysics(),
+        // indicatorWeight: 0.1,
         // onTap: (value) => onItemTapped(value, context),
         tabs: const [
           Tab(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 5,
-                ),
-                Icon(
-                  Icons.star,
-                  size: 20,
-                ),
-                Text('Destacadas')
-              ],
-            ),
-          ),
+              // icon: Icon(Icons.star),
+              child: Row(
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // const Icon(Icons.star, size: 20,),
+              Text(
+                'Destacadas',
+                style: TextStyle(fontSize: 18),
+              ),
+            ],
+          )),
           Tab(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.task_alt, size: 20),
-                SizedBox(
-                  width: 5,
-                ),
-                Text('Mis tareas')
-              ],
-            ),
-          ),
+              child: Text(
+            'Mis tareas',
+            style: TextStyle(fontSize: 18),
+          )),
           Tab(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.done_all,
-                  size: 20,
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Text('Completadas')
-              ],
-            ),
-          )
+              child: Text(
+            'Completadas',
+            style: TextStyle(fontSize: 18),
+          ))
         ]);
   }
 }
