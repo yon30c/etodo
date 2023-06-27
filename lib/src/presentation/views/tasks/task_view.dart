@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../providers/providers.dart';
 import '../../widgets/widgets.dart';
@@ -54,9 +53,9 @@ class TasksViewState extends ConsumerState<TasksView> {
             ),
             Text(
               'No hay tareas aún',
-              style: GoogleFonts.kalam(fontSize: 24, fontWeight:FontWeight.w400),
+              style: textStyle.titleLarge,
             ),
-            Text('Agrega tareas pendientes', style: GoogleFonts.kalam(fontSize: 18)),
+            Text('Agrega tareas pendientes', style: textStyle.titleMedium),
             const SizedBox(
               height: 35,
             )

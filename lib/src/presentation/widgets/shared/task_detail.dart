@@ -89,6 +89,9 @@ class TaskDetails extends ConsumerWidget {
                 ),
               ),
 
+              const SizedBox(height: 7,),
+
+
 
               SizedBox(
                 width: double.infinity,

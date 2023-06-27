@@ -15,12 +15,15 @@ class LocalNotifications {
 
     const android = AndroidInitializationSettings('app_icon');
 
+    const linux = LinuxInitializationSettings(defaultActionName: 'eToDO');
+
     // TODO: ios configuration
 
     // const InitializationSettings(android: android);
 
     notificationPlugin.initialize(
-      const InitializationSettings(android: android),
+      const InitializationSettings(android: android, linux: linux),
+
       // onDidReceiveBackgroundNotificationResponse:
     );
   }
@@ -31,12 +34,12 @@ class LocalNotifications {
       String? body,
       String? data,
       required TZDateTime scheduledDate}) async {
-    const androidDetails = AndroidNotificationDetails(
-        'channelId', 'channelName',
-        playSound: true,
-        // sound: RawResourceAndroidNotificationSound('notification'),
-        importance: Importance.max,
-        priority: Priority.high);
+    const androidDetails =
+        AndroidNotificationDetails('channelId', 'channelName',
+            playSound: true,
+            // sound: RawResourceAndroidNotificationSound('notification'),
+            importance: Importance.max,
+            priority: Priority.high);
     const notificationDetails = NotificationDetails(
       android: androidDetails,
     );

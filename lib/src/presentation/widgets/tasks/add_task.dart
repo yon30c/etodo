@@ -51,14 +51,16 @@ class AddTaskState extends ConsumerState<AddTask> {
 
     return AlertDialog(
       contentPadding: const EdgeInsets.only(left: 10, right: 10, top: 15),
-      content: SizedBox(
-        width: size.width * 0.8,
+      content: Container(
+        width: size.width * 0.9,
+        constraints: BoxConstraints(maxWidth:size.width * 0.9 ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               children: [
                 _CustomTextField(textController, widget.task),
+                const Spacer(),
                 _showDateAndTimePicker(context),
               ],
             ),

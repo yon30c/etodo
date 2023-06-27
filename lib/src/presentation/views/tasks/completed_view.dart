@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../providers/providers.dart';
 import '../../widgets/widgets.dart';
@@ -58,11 +57,11 @@ class CompletedViewState extends ConsumerState<CompletedView> {
                 const SizedBox(
                   height: 10,
                 ),
-                Padding(
+                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
                   child: Text(
                     'No tienes tareas completadas',
-                    style: GoogleFonts.kalam( fontSize: 24, fontWeight:FontWeight.w400 ),
+                    style: textStyle.titleLarge,
                     textAlign: TextAlign.center,
                   ),
                 ),

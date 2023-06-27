@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../providers/providers.dart';
 import '../../widgets/widgets.dart';
@@ -41,6 +40,7 @@ class PriorityViewState extends ConsumerState<PriorityView> {
     final tasks = ref.watch(priorityTaskFProvider);
     final textStyle = Theme.of(context).textTheme;
 
+
     return tasks.when(
       data: (data) {
         if (data.isEmpty) {
@@ -57,14 +57,14 @@ class PriorityViewState extends ConsumerState<PriorityView> {
                 ),
                 Text(
                   'No tienes tareas destacadas',
-                  style: GoogleFonts.kalam(fontSize: 24, fontWeight:FontWeight.w400 ),
+                  style: textStyle.titleLarge,
                 ),
                  Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 45),
                   child: Text(
                     'Marca las tareas importantes con una estrella para poder encontrarlas fácilmente aquí',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.kalam(fontSize: 18),
+                    style: textStyle.titleMedium,
                   ),
                 )
               ],
